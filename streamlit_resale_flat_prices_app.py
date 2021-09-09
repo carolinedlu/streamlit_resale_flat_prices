@@ -1,6 +1,22 @@
+'''
+conda deactivate
+
+conda env remove -n streamlit_resale_flat_prices
+
+conda create -n streamlit_resale_flat_prices python=3.8.5
+
+conda activate streamlit_resale_flat_prices
+
+conda install streamlit
+
+cd C:\Users\Russ\Anaconda3\Russ Projects\Resale Flat Prices\streamlit_resale_flat_prices
+python streamlit_resale_flat_prices_app.py
+
+'''
+
 # imports
 import pandas as pd
-import numpy as np
+# import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
@@ -35,4 +51,5 @@ ax.set_title('Boxplot of Flat Resale Price by Town')
 # show ploy
 st.pyplot(fig)
 
-pip3 freeze >> C:\Users\Russ\anaconda3\Russ Projects\Resale Flat Prices\streamlit_resale_flat_prices\requirements.txt
+
+print('### File ran properly ###')
