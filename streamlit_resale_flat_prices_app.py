@@ -1,18 +1,17 @@
-'''
-conda deactivate
 
-conda env remove -n streamlit_resale_flat_prices
+# conda deactivate
 
-conda create -n streamlit_resale_flat_prices python=3.8.5
+# conda env remove -n streamlit_resale_flat_prices
 
-conda activate streamlit_resale_flat_prices
+# conda create -n streamlit_resale_flat_prices python=3.8.5
 
-conda install streamlit
+# conda activate streamlit_resale_flat_prices
 
-cd C:\Users\Russ\Anaconda3\Russ Projects\Resale Flat Prices\streamlit_resale_flat_prices
-python streamlit_resale_flat_prices_app.py
+# conda install streamlit
 
-'''
+# cd C:\Users\Russ\Anaconda3\Russ Projects\Resale Flat Prices\streamlit_resale_flat_prices
+# python streamlit_resale_flat_prices_app.py
+
 
 # imports
 import pandas as pd
