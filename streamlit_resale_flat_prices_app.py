@@ -33,7 +33,7 @@ def load_data_from_csv(file_path):
     return data
 
 # load data from csv
-data = load_data_from_csv('flat_prices_full.csv')
+data = load_data_from_csv('resale_flat_prices_clean_data.csv')
 
 
 
