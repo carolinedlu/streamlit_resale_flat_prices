@@ -23,12 +23,11 @@ st.title('Resale Flat Prices')
 # load data from csv
 def load_data_from_csv(file_path):
     # read data
-    data_raw = pd.read_csv(file_path)
+    data = pd.read_csv(file_path)
     # convert to year_month to datetime format
-    data_raw['year_month'] = pd.to_datetime(data_raw['year_month'])
-    # copy raw data
-    data = data_raw.copy()
-
+    data['year_month'] = pd.to_datetime(data['year_month'])
+    # convert latitude and longitude to numeric
+    data[['latitude', 'longitude']] = data[['latitude', 'longitude']].apply(pd.to_numeric)
     # return 
     return data
 
