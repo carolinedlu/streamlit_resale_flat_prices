@@ -58,8 +58,8 @@ data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
 
 
 ### map using latitude and longitude ###
-# map
-st.map(data)
+# # map
+# st.map(data)
 
 
 
