@@ -14,9 +14,12 @@ import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
 import streamlit as st
+import pickle
 
 # title of app
 st.title('Resale Flat Prices')
+
+
 
 # cache data for quicker loading
 @st.cache
@@ -33,7 +36,6 @@ def load_data_from_csv(file_path):
 
 # load data from csv
 data = load_data_from_csv('resale_flat_prices_clean_data.csv')
-
 
 
 
@@ -87,6 +89,7 @@ ax.set_title('Boxplot of Flat Resale Price by Town')
 st.pyplot(fig)
 
 
+
 ### boxplot of town ###
 
 # set plot and figure size
@@ -112,4 +115,34 @@ ax.set_title('Boxplot of Flat Resale Price by Town')
 st.pyplot(fig)
 
 
-print('### File ran properly ###')
+
+
+### prediction ###
+
+# prediction section
+st.write('Predict Resale Flat Price:')
+
+# ask and store users input
+input_latitude = st.number_input('Latitude')
+input_longitude = st.number_input('Longitude')
+input_floor_area_sqm = st.number_input('Floor Area (square meters)')
+input_floor = st.number_input('Floor')
+input_remaining_lease_years = st.number_input('Remaining Lease (years)')
+
+# load model
+model = pickle.load(open('xgb_baseline.pkl', 'rb'))
+# format user inputs into df for xgb prediction
+input_data = pd.DataFrame({
+    'latitude':[input_latitude],
+    'longitude':[input_longitude],
+    'floor_area_sqm':[input_floor_area_sqm],
+    'floor':[input_floor],
+    'remaining_lease_years':[input_remaining_lease_years]
+})
+
+# add predict button
+if st.button('Predict'):
+    # predict input_data using model
+    prediction = model.predict(input_data)[0]
+    # print prediction
+    st.write(f'The predicted resale flat price is {prediction}.')
