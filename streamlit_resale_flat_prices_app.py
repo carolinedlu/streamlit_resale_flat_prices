@@ -3,9 +3,7 @@
 # conda create -n streamlit_resale_flat_prices python=3.8.5
 # conda activate streamlit_resale_flat_prices
 # conda install streamlit
-# cd C:\Users\Russ\Anaconda3\Russ Projects\Resale Flat Prices\streamlit_resale_flat_prices
 # python streamlit_resale_flat_prices_app.py
-
 
 # imports
 import pandas as pd
@@ -19,6 +17,7 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
+import pydeck as pdk
 
 
 
@@ -84,7 +83,29 @@ data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
 # map
 st.map(data)
 
-
+st.pydeck_chart(pdk.Deck(
+    map_style='mapbox://styles/mapbox/light-v9',
+    initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=10, pitch=50),
+    layers=[
+        pdk.Layer(
+            'HexagonLayer',
+            data=data,
+            get_position='[longitude, latitude]',
+            radius=200,
+            elevation_scale=4,
+            elevation_range=[0,1000],
+            pickable=True,
+            extruded=True,
+        ),
+        pdk.Layer(
+            'ScatterplotLayer',
+            data=data,
+            get_position='[longitude, latitude]',
+            get_color='[200, 30, 0, 160]',
+            get_radius=200,
+        )
+    ]
+))
 
 ### boxplot of flat type ###
 
@@ -144,7 +165,7 @@ st.pyplot(fig)
 
 # prediction section
 st.write('# Predict Resale Flat Price')
-st.write('Enter some basic information of your flat to for the model to predict it\'s resale price')
+st.write('Enter some basic information of your flat for the model to predict it\'s resale price')
 
 # form to store users input
 with st.form(key='input_form'):
