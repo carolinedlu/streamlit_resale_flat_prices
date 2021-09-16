@@ -10,14 +10,17 @@
 # imports
 import pandas as pd
 import numpy as np
+import streamlit as st
 import os
 import datetime as dt
+import requests
+import pickle
+
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
-import streamlit as st
-import pickle
-import resale_flat_prices_library as LIB
+
+
 
 # title of app
 st.title('Exploration Resale Prices of Public Housing in Singapore')
@@ -138,8 +141,39 @@ input_postal_code = st.number_input('Postal Code')
 input_floor_area_sqm = st.number_input('Floor Area (square meters)')
 input_floor = st.number_input('Floor')
 input_lease_commence_year = st.number_input('Lease Commence (year)')
+
+# get coordinates from address as latitude and longitude using google geocode api
+def get_coordinates_from_address(address, api_key):
+    '''
+    get coodinates from an address using google geocode api
+    information on how to set up and create api key can be found here
+    https://developers.google.com/maps/documentation/geocoding/overview?hl=en_GB
+
+    arguments:
+    address (str): address to get coordinates of
+    api_key (str): api key from google cloud platform
+
+    returns:
+    a tuple containing latitude and longitude
+    '''
+    # request response from google geocode api
+    api_response = requests.get(f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}').json()
+    # check if api response is 'OK'
+    if api_response['status'] == 'OK':
+        # get latitude from response
+        latitude = api_response['results'][0]['geometry']['location']['lat']
+        # get longitude from response
+        longitude = api_response['results'][0]['geometry']['location']['lng']
+    else:
+        # if status is not 'OK', add status as error message
+        latitude = 'error: ' + api_response['status']
+        longitude = 'error: ' + api_response['status']
+
+    # return a tuple
+    return (latitude, longitude)
+
 # get latitude and longitude from postal code
-coordinates = LIB.get_coordinates_from_address(str(input_postal_code) + ' Singapore', st.secrets['geocode_api_key'])
+coordinates = get_coordinates_from_address(str(input_postal_code) + ' Singapore', st.secrets['geocode_api_key'])
 # calculate remaining lease years from lease commencement date
 input_remaining_lease_years = dt.date.today().year - input_lease_commence_year
 
