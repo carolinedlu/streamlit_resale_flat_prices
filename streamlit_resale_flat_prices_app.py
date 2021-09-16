@@ -137,10 +137,10 @@ st.pyplot(fig)
 st.write('Predict Resale Flat Price:')
 
 # ask and store users input
-input_postal_code = st.number_input('Postal Code')
-input_floor_area_sqm = st.number_input('Floor Area (square meters)')
-input_floor = st.number_input('Floor')
-input_lease_commence_year = st.number_input('Lease Commence (year)')
+input_postal_code = st.text_input('Postal Code')
+input_floor_area_sqm = st.number_input('Floor Area (square meters)', min_value=1)
+input_floor = st.number_input('Floor', min_value=1)
+input_lease_commence_year = st.number_input('Lease Commence (year)', min_value=1)
 
 # get coordinates from address as latitude and longitude using google geocode api
 def get_coordinates_from_address(address, api_key):
@@ -173,7 +173,7 @@ def get_coordinates_from_address(address, api_key):
     return (latitude, longitude)
 
 # get latitude and longitude from postal code
-coordinates = get_coordinates_from_address(str(input_postal_code) + ' Singapore', st.secrets['geocode_api_key'])
+coordinates = get_coordinates_from_address(input_postal_code+' Singapore', st.secrets['geocode_api_key'])
 # calculate remaining lease years from lease commencement date
 input_remaining_lease_years = dt.date.today().year - input_lease_commence_year
 
@@ -186,7 +186,6 @@ input_data = pd.DataFrame({
     'remaining_lease_years':[input_remaining_lease_years]
 })
 
-# add predict button
 # load model
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 
@@ -195,6 +194,6 @@ if st.button('Predict'):
     # predict input_data using model
     prediction = model.predict(input_data)[0]
     # format prediction with thousands separator and round to two decimal places
-    prediction = '{0:,}'.format(round(prediction, 2))
+    prediction = '{:,.2f}'.format(round(prediction, 2))
     # print prediction
     st.write(f'The predicted resale flat price is ${prediction}.')
