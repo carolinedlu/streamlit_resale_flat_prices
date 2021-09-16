@@ -83,8 +83,6 @@ data_for_map = filter_data_for_map(data, 3)
 st.write(f'Heat map of number of flat transactions in the past three years.')
 st.write('There is a memory limit hence need for the restriction of three years.')
 
-# cache data
-@st.cache(suppress_st_warning=True)
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
     # create map from pydeck
