@@ -59,9 +59,11 @@ total_row_count = '{:,}'.format(len(data))
 # introduction to app
 st.write(
     f'''
-    # The data has been extracted from Data.gov.sg. 
-    <br>
-    # There are {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.
+    ## The data has been extracted from Data.gov.sg. 
+    ## There are {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.
+
+
+
     ''')
 
 
@@ -72,7 +74,7 @@ st.write(
 # determine max number of years from data
 max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
 # define slider
-past_n_years = st.slider('How many years of past data would you like to use?', min_value=1, max_value=max_past_n_years, value=10)
+past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=10)
 
 # filter number of years of data to use based on slider
 
