@@ -57,16 +57,13 @@ max_data_date = data['year_month'].max().strftime('%B %Y')
 total_row_count = '{:,}'.format(len(data))
 
 # introduction to app
-st.write(
+st.markdown(
     f'''
-     
-     
-     
-    The data has been extracted from Data.gov.sg. 
+    <br>
+    The data has been extracted from Data.gov.sg.
+    <br>
     There are {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.
-     
-     
-     
+    <br>
     ''')
 
 
