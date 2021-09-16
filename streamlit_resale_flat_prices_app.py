@@ -60,7 +60,7 @@ for file_name in os.listdir(data_folder):
 # determine max number of years from data
 max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
 # define slider
-past_n_years = st.slider('How many years of past data would you like to use?', min_value=1, max_value=max_past_n_years, value=10)
+past_n_years = st.slider('# How many years of past data would you like to use?', min_value=1, max_value=max_past_n_years, value=10)
 
 # filter number of years of data to use based on slider
 
@@ -134,7 +134,8 @@ st.pyplot(fig)
 ### prediction ###
 
 # prediction section
-st.write('Predict Resale Flat Price:')
+st.write('# Predict Resale Flat Price')
+st.write('Enter some basic information of your flat to for the model to predict it\'s resale price')
 
 # form to store users input
 with st.form(key='input_form'):
@@ -195,6 +196,9 @@ with st.form(key='input_form'):
 
 # load model
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
+
+# describe predict button
+st.write('Take a guess at the price before running the model!')
 
 # add predict button
 if st.button('Predict'):
