@@ -24,8 +24,8 @@ import seaborn as sns
 
 # title of app
 st.title('Exploration Resale Prices of Public Housing in Singapore')
-
-
+st.write('\n')
+st.write('\n')
 
 # cache data for quicker loading
 @st.cache
@@ -57,15 +57,10 @@ max_data_date = data['year_month'].max().strftime('%B %Y')
 total_row_count = '{:,}'.format(len(data))
 
 # introduction to app
-st.markdown(
-    f'''
-    <br>
-    The data has been extracted from Data.gov.sg.
-    <br>
-    There are {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.
-    <br>
-    ''')
-
+st.write(f'The data has been extracted from Data.gov.sg.')
+st.write(f'There are a total of {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.')
+st.write('\n')
+st.write('\n')
 
 # slider to select past n number of years of data to use
 
