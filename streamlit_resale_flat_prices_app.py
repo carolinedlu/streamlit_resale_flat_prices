@@ -65,16 +65,27 @@ st.write('\n')
 
 ### map using latitude and longitude ###
 
+# cache data
+@st.cache
 # filter data for map due to memory limit in streamlit
-map_date = data['year_month'].max() - relativedelta(years=3)
-data_for_map = data.loc[(data['year_month'] >= map_date)]
+def filter_data_for_map(data, years):
+    # get number of years to filter
+    map_date = data['year_month'].max() - relativedelta(years=years)
+    # filter data for map by years
+    data_for_map = data.loc[(data['year_month'] >= map_date)]
+    # return
+    return data_for_map
+
+# filter data for map due to memory limit in streamlit
+data_for_map = filter_data_for_map(data, 3)
+
 # describe map
 st.write(f'Heat map of number of flat transactions in the past three years.')
 st.write('There is a memory limit hence need for the restriction of three years.')
 
 # cache data
-@st.cache
-# define pydeck map function
+@st.cache(suppress_st_warning=True)
+# create pydeck map in streamlit
 def pydeck_map(data_for_map):
     # create map from pydeck
     layer=[
@@ -102,9 +113,8 @@ def pydeck_map(data_for_map):
         layers=layer
         ))
 
-# map data
+# create pydeck map in streamlit
 pydeck_map(data_for_map)
-
 
 
 # slider to select past n number of years of data to use
@@ -114,7 +124,7 @@ pydeck_map(data_for_map)
 # determine max number of years from data
 max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
 # define slider
-past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=1)
+past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=10)
 
 # filter number of years of data to use based on slider
 
