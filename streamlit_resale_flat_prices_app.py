@@ -20,7 +20,7 @@ import pickle
 # title of app
 st.title('Resale Flat Prices')
 
-st.write(st.secrets['geocode_api_key'])
+st.write(st.secrets['api_key'])
 
 
 
