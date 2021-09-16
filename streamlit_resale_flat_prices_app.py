@@ -81,7 +81,7 @@ data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
 
 ### map using latitude and longitude ###
 # map
-st.map(data)
+#st.map(data)
 
 st.pydeck_chart(pdk.Deck(
     map_style='mapbox://styles/mapbox/light-v9',
@@ -91,9 +91,9 @@ st.pydeck_chart(pdk.Deck(
             'HexagonLayer',
             data=data,
             get_position='[longitude, latitude]',
-            radius=200,
-            elevation_scale=4,
-            elevation_range=[0,1000],
+            radius=40,
+            elevation_scale=3,
+            elevation_range=[0,500],
             pickable=True,
             extruded=True,
         ),
@@ -102,10 +102,12 @@ st.pydeck_chart(pdk.Deck(
             data=data,
             get_position='[longitude, latitude]',
             get_color='[200, 30, 0, 160]',
-            get_radius=200,
+            get_radius=40,
         )
     ]
 ))
+
+
 
 ### boxplot of flat type ###
 
