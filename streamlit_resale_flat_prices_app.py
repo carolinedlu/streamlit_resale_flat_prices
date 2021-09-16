@@ -20,6 +20,8 @@ import pickle
 # title of app
 st.title('Resale Flat Prices')
 
+st.write(st.secrets['api_key'])
+
 
 
 # cache data for quicker loading
