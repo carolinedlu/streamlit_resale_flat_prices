@@ -137,61 +137,61 @@ st.pyplot(fig)
 st.write('Predict Resale Flat Price:')
 
 # form to store users input
-form = st.form(key='input_form')
+with st.form(key='input_form'):
 
-# ask and store users input
-input_postal_code = st.text_input('Postal Code')
-input_floor_area_sqm = st.number_input('Floor Area (square meters)', min_value=1)
-input_floor = st.number_input('Floor', min_value=1)
-input_lease_commence_year = st.number_input('Lease Commence (year)', min_value=1)
+    # ask and store users input
+    input_postal_code = st.text_input(label='Postal Code')
+    input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1)
+    input_floor = st.number_input(label='Floor', min_value=1)
+    input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1)
 
-# get coordinates from address as latitude and longitude using google geocode api
-def get_coordinates_from_address(address, api_key):
-    '''
-    get coodinates from an address using google geocode api
-    information on how to set up and create api key can be found here
-    https://developers.google.com/maps/documentation/geocoding/overview?hl=en_GB
+    # get coordinates from address as latitude and longitude using google geocode api
+    def get_coordinates_from_address(address, api_key):
+        '''
+        get coodinates from an address using google geocode api
+        information on how to set up and create api key can be found here
+        https://developers.google.com/maps/documentation/geocoding/overview?hl=en_GB
 
-    arguments:
-    address (str): address to get coordinates of
-    api_key (str): api key from google cloud platform
+        arguments:
+        address (str): address to get coordinates of
+        api_key (str): api key from google cloud platform
 
-    returns:
-    a tuple containing latitude and longitude
-    '''
-    # request response from google geocode api
-    api_response = requests.get(f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}').json()
-    # check if api response is 'OK'
-    if api_response['status'] == 'OK':
-        # get latitude from response
-        latitude = api_response['results'][0]['geometry']['location']['lat']
-        # get longitude from response
-        longitude = api_response['results'][0]['geometry']['location']['lng']
-    else:
-        # if status is not 'OK', add status as error message
-        latitude = 'error: ' + api_response['status']
-        longitude = 'error: ' + api_response['status']
+        returns:
+        a tuple containing latitude and longitude
+        '''
+        # request response from google geocode api
+        api_response = requests.get(f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}').json()
+        # check if api response is 'OK'
+        if api_response['status'] == 'OK':
+            # get latitude from response
+            latitude = api_response['results'][0]['geometry']['location']['lat']
+            # get longitude from response
+            longitude = api_response['results'][0]['geometry']['location']['lng']
+        else:
+            # if status is not 'OK', add status as error message
+            latitude = 'error: ' + api_response['status']
+            longitude = 'error: ' + api_response['status']
 
-    # return a tuple
-    return (latitude, longitude)
+        # return a tuple
+        return (latitude, longitude)
 
-# get latitude and longitude from postal code
-coordinates = get_coordinates_from_address(input_postal_code+' Singapore', st.secrets['geocode_api_key'])
-# calculate remaining lease years from lease commencement date
-input_remaining_lease_years = dt.date.today().year - input_lease_commence_year
+    # get latitude and longitude from postal code
+    coordinates = get_coordinates_from_address(input_postal_code+' Singapore', st.secrets['geocode_api_key'])
+    # calculate remaining lease years from lease commencement date
+    input_remaining_lease_years = dt.date.today().year - input_lease_commence_year
 
-# format user inputs into df for xgb prediction
-input_data = pd.DataFrame({
-    'latitude':[coordinates[0]],
-    'longitude':[coordinates[1]],
-    'floor_area_sqm':[input_floor_area_sqm],
-    'floor':[input_floor],
-    'remaining_lease_years':[input_remaining_lease_years]
-})
+    # format user inputs into df for xgb prediction
+    input_data = pd.DataFrame({
+        'latitude':[coordinates[0]],
+        'longitude':[coordinates[1]],
+        'floor_area_sqm':[input_floor_area_sqm],
+        'floor':[input_floor],
+        'remaining_lease_years':[input_remaining_lease_years]
+    })
 
-# submit form button
-st.write('Load inputs to machine learning model to prepare for a prediction:')
-submit = form.form_submit_button('Load')
+    # submit form button
+    st.write('Load inputs to machine learning model to prepare for a prediction:')
+    submit = st.form_submit_button(label='Load')
 
 # load model
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
