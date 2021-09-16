@@ -70,15 +70,17 @@ map_date = data['year_month'].max() - relativedelta(years=3)
 data_for_map = data.loc[(data['year_month'] >= map_date)]
 # describe map
 st.write(f'Heat map of number of flat transactions in the past three years.')
-st.write('#### There is a memory limit hence need for the restriction of three years.')
+st.write('There is a memory limit hence need for the restriction of three years.')
 
-# create map from pydeck
-st.pydeck_chart(pdk.Deck(
-    initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=12, pitch=40),
-    layers=[
+# cache data
+@st.cache
+# define pydeck map function
+def pydeck_map(data_for_map):
+    # create map from pydeck
+    layer=[
         pdk.Layer(
             'HexagonLayer',
-            data=data,
+            data=data_for_map,
             get_position='[longitude, latitude]',
             radius=40,
             elevation_scale=3,
@@ -88,13 +90,20 @@ st.pydeck_chart(pdk.Deck(
         ),
         pdk.Layer(
             'ScatterplotLayer',
-            data=data,
+            data=data_for_map,
             get_position='[longitude, latitude]',
             get_color='[200, 30, 0, 160]',
             get_radius=40,
         )
     ]
-))
+
+    st.pydeck_chart(pdk.Deck(
+        initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=12, pitch=40),
+        layers=layer
+        ))
+
+# map data
+pydeck_map(data_for_map)
 
 
 
