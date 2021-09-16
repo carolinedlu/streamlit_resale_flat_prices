@@ -10,17 +10,17 @@
 # imports
 import pandas as pd
 import numpy as np
+import os
+import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sns
 import streamlit as st
 import pickle
-# import xgboost as xgb
+import resale_flat_prices_library as LIB
 
 # title of app
-st.title('Resale Flat Prices')
-
-# st.secrets['geocode_api_key'])
+st.title('Exploration Resale Prices of Public Housing in Singapore')
 
 
 
@@ -37,8 +37,16 @@ def load_data_from_csv(file_path):
     # return 
     return data
 
-# load data from csv
-data = load_data_from_csv('resale_flat_prices_clean_data.csv')
+# define data directory
+data_folder = 'data'
+# create empty dataframe to concat data later
+data = pd.DataFrame()
+# loop through each file in data_folder and concat into one df
+for file_name in os.listdir(data_folder):
+    # load data
+    temp_data = load_data_from_csv(os.path.join(data_folder, file_name))
+    # concat data
+    data = pd.concat([data, temp_data])
 
 
 
@@ -126,26 +134,33 @@ st.pyplot(fig)
 st.write('Predict Resale Flat Price:')
 
 # ask and store users input
-input_latitude = st.number_input('Latitude')
-input_longitude = st.number_input('Longitude')
+input_postal_code = st.number_input('Postal Code')
 input_floor_area_sqm = st.number_input('Floor Area (square meters)')
 input_floor = st.number_input('Floor')
-input_remaining_lease_years = st.number_input('Remaining Lease (years)')
+input_lease_commence_year = st.number_input('Lease Commence (year)')
+# get latitude and longitude from postal code
+coordinates = LIB.get_coordinates_from_address(str(input_postal_code) + ' Singapore', st.secrets['geocode_api_key'])
+# calculate remaining lease years from lease commencement date
+input_remaining_lease_years = dt.date.today().year - input_lease_commence_year
 
-# load model
-model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 # format user inputs into df for xgb prediction
 input_data = pd.DataFrame({
-    'latitude':[input_latitude],
-    'longitude':[input_longitude],
+    'latitude':[coordinates[0]],
+    'longitude':[coordinates[1]],
     'floor_area_sqm':[input_floor_area_sqm],
     'floor':[input_floor],
     'remaining_lease_years':[input_remaining_lease_years]
 })
 
 # add predict button
+# load model
+model = pickle.load(open('xgb_baseline.pkl', 'rb'))
+
+# add predict button
 if st.button('Predict'):
     # predict input_data using model
     prediction = model.predict(input_data)[0]
+    # format prediction with thousands separator and round to two decimal places
+    prediction = '{0:,}'.format(round(prediction, 2))
     # print prediction
-    st.write(f'The predicted resale flat price is {prediction}.')
+    st.write(f'The predicted resale flat price is ${prediction}.')
