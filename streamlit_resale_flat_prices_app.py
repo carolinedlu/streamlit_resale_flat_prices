@@ -11,6 +11,7 @@ import numpy as np
 import streamlit as st
 import os
 import datetime as dt
+from dateutil.relativedelta import relativedelta
 import requests
 import pickle
 
@@ -61,31 +62,19 @@ st.write(f'There are a total of {total_row_count} recorded resale flat transacti
 st.write('\n')
 st.write('\n')
 
-# slider to select past n number of years of data to use
-
-# set default value to past 10 years
-# set to use at least past 1 year of data
-# determine max number of years from data
-max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
-# define slider
-past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=10)
-
-# filter number of years of data to use based on slider
-
-# define latest year of data
-latest_year = str(data['year_month'].max().year - past_n_years)
-# filter past n number of years
-data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
-
-
 
 ### map using latitude and longitude ###
-# map
-#st.map(data)
 
+# filter data for map due to memory limit in streamlit
+map_date = data['year_month'].max() - relativedelta(years=3)
+data_for_map = data.loc[(data['year_month'] >= map_date)]
+# describe map
+st.write(f'Heat map of number of flat transactions in the past three years.')
+st.write('#### There is a memory limit hence need for the restriction of three years.')
+
+# create map from pydeck
 st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/light-v9',
-    initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=10, pitch=50),
+    initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=12, pitch=40),
     layers=[
         pdk.Layer(
             'HexagonLayer',
@@ -106,6 +95,47 @@ st.pydeck_chart(pdk.Deck(
         )
     ]
 ))
+
+
+
+# slider to select past n number of years of data to use
+
+# set default value to past 10 years
+# set to use at least past 1 year of data
+# determine max number of years from data
+max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
+# define slider
+past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=1)
+
+# filter number of years of data to use based on slider
+
+# define latest year of data
+latest_year = str(data['year_month'].max().year - past_n_years)
+# filter past n number of years
+data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
+
+
+
+### histogram of flat prices ###
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=(15,10))
+
+ax = sns.histplot(
+    x='resale_price',
+    data=data,
+    bins=50
+)
+
+# formatting
+# add thousands separator
+ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+# set title
+ax.set_title('Resale Flat Price')
+
+# show plot
+st.pyplot(fig)
 
 
 
