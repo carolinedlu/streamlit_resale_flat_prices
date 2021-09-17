@@ -87,7 +87,7 @@ max_heatmap_years = 3
 data_for_map = filter_data_for_map(data, max_heatmap_years)
 
 # describe map
-st.write(f'Heat map of number of flat transactions in the past {max_heatmap_years} years.')
+st.write(f'Let\'s have a look at where flats are being transacted in the past {max_heatmap_years} years. The taller the pillars, the more transactions have taken place.')
 
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
@@ -121,7 +121,7 @@ def pydeck_map(data_for_map):
 # create pydeck map in streamlit
 pydeck_map(data_for_map)
 st.write('\n')
-
+st.write('\n')
 
 
 ### silder to fitler data period ###
@@ -154,7 +154,7 @@ most_expensive = data.loc[(data['resale_price'] == period_describe['max'])].rese
 # print descriptive statistics
 st.write(f'In the period from {visualisation_period[0]} to {visualisation_period[1]}:')
 st.write(f'The average resale flat price is ${period_mean} and the median is ${period_median}.')
-st.write(f"The most expensive flat sold for ${period_max}! The flat was sold in {most_expensive['year_month'].strftime('%B %Y')} at {most_expensive['block'].title()+' '+most_expensive['street_name'].title()}, it was a {most_expensive['flat_type'].title()} with a {round(most_expensive['floor_area_sqm'])} square meter floor area.")
+st.write(f"The most expensive flat sold for ${period_max}! The flat was transacted in {most_expensive['year_month'].strftime('%B %Y')} at {most_expensive['block'].title()+' '+most_expensive['street_name'].title()}, it was a {most_expensive['flat_type'].title()} with a {round(most_expensive['floor_area_sqm'])} square meter floor area.")
 st.write('\n')
 st.write('\n')
 
@@ -174,7 +174,7 @@ plot_axis_fontsize = 15
 # order by value count of town
 town_order = data['town'].value_counts().index
 # describe plot
-st.write(f"This chart shows the number of transactions by Town. The most transactions occured in {town_order[0]}.")
+st.write(f"This chart shows the number of transactions by Town. The most transactions occured in {town_order[0].title()}.")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -203,7 +203,7 @@ st.write('\n')
 ### histogram of town ###
 
 # describe plot
-st.write(f"This chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0]}")
+st.write(f"This chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0].title()}")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -335,7 +335,7 @@ st.write('\n')
 # order by descending median resale_price
 town_order = list(data.groupby(['town']).agg({'resale_price':'median'}).reset_index().sort_values('resale_price', ascending=False)['town'])
 # describe plot
-st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {town_order[0]}!")
+st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {town_order[0].title()}!")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
