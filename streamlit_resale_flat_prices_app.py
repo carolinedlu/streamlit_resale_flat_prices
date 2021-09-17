@@ -27,6 +27,10 @@ st.title('Exploration Resale Prices of Public Housing in Singapore')
 st.write('\n')
 st.write('\n')
 
+
+
+### load data ###
+
 # cache data for quicker loading
 @st.cache
 # load data from csv
@@ -63,6 +67,7 @@ st.write('\n')
 st.write('\n')
 
 
+
 ### map using latitude and longitude ###
 
 # cache data
@@ -81,7 +86,6 @@ data_for_map = filter_data_for_map(data, 3)
 
 # describe map
 st.write(f'Heat map of number of flat transactions in the past three years.')
-st.write('There is a memory limit hence need for the restriction of three years.')
 
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
@@ -114,23 +118,92 @@ def pydeck_map(data_for_map):
 
 # create pydeck map in streamlit
 pydeck_map(data_for_map)
+st.write('\n')
 
 
-# slider to select past n number of years of data to use
 
-# set default value to past 10 years
-# set to use at least past 1 year of data
-# determine max number of years from data
-max_past_n_years = round((data['year_month'].max() - data['year_month'].min()) / np.timedelta64(1, 'Y')) + 1
-# define slider
-past_n_years = st.slider('How many years of past data would you like to visualise?', min_value=1, max_value=max_past_n_years, value=10)
+### slider to select period of years to visualise ###
 
-# filter number of years of data to use based on slider
+# default minimum and maximum year from data
+period_date_max = data['year_month'].max().year
+period_date_min = data['year_month'].min().year
+# define slider, default value max as latest data year and min as five years before
+visualisation_period = st.slider('Which period would you like to visualise?', min_value=period_date_min, max_value=period_date_max, value=(period_date_max-5,period_date_max))
+# filter data based on period
+data = data.loc[(data['year_month'] >= str(visualisation_period[0])+'-01-01') & (data['year_month'] <= str(visualisation_period[1])+'-12-01')]
 
-# define latest year of data
-latest_year = str(data['year_month'].max().year - past_n_years)
-# filter past n number of years
-data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
+# get descriptive statistics of resale_price for selected period
+
+# describe resale_price
+period_describe = data['resale_price'].describe()
+# mean
+period_mean = '{:,}'.format(round(period_describe['mean']))
+# median
+period_median = '{:,}'.format(round(period_describe['50%']))
+# max
+period_max = '{:,}'.format(round(period_describe['max']))
+# get data for most expensive flat, if there is more than one, select latest transaction
+most_expensive = data.loc[(data['resale_price'] == period_describe['max'])].reset_index(drop=True).sort_values('year_month', ascending=False).iloc[0]
+
+# print descriptive statistics
+st.write(f'In the period from {visualisation_period[0]} to {visualisation_period[1]}:')
+st.write(f'The average resale flat price is ${period_mean} and the median is ${period_median}.')
+st.write(f'The most expensive flat sold for ${period_max}!')
+st.write(f"The flat was sold in {most_expensive['year_month'].strftime('%B %Y')} at {most_expensive['block'].title()+' '+most_expensive['street_name'].title()}, it was a {most_expensive['flat_type'].title()} with a {round(most_expensive['floor_area_sqm'])} square meter floor area.")
+
+
+
+### histogram of town ###
+
+# order by descending median resale_price
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=(15,10))
+
+# order by value count of town
+town_order = data['town'].value_counts().index
+
+# plot ax
+ax = sns.countplot(
+    y='town',
+    data=data,
+    order=town_order
+)
+
+# formatting
+# add thousands separator
+ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+# set title
+ax.set_title('Count of Transactions by Town')
+
+# show plot
+st.pyplot(fig)
+
+
+
+### histogram of town ###
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=(15,10))
+
+# order by flat_type alphabetically
+flat_type_order = sorted(list(data['flat_type'].unique()))
+
+# plot ax
+ax = sns.countplot(
+    x='flat_type',
+    data=data,
+    order=flat_type_order
+)
+
+# formatting
+# add thousands separator
+ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+# set title
+ax.set_title('Count of Transactions by Flat Type')
+
+# show plot
+st.pyplot(fig)
 
 
 
@@ -139,10 +212,14 @@ data = data.loc[(data['year_month'] >= latest_year+'-01-01')]
 # set plot and figure size
 fig, ax = plt.subplots(figsize=(15,10))
 
+# plot ax
 ax = sns.histplot(
     x='resale_price',
-    data=data,
-    bins=50
+    data=data.sort_values('flat_type'),
+    bins=100,
+    hue='flat_type',
+    element='step',
+    kde=True
 )
 
 # formatting
@@ -150,7 +227,32 @@ ax = sns.histplot(
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Resale Flat Price')
+ax.set_title('Resale Flat Price by Flat Type')
+
+# show plot
+st.pyplot(fig)
+
+
+
+### scatterplot of resale_price and floor_area_sqm ###
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=(15,10))
+
+# plot ax
+sns.scatterplot(
+    x='resale_price',
+    y='floor_area_sqm',
+    data=data.sort_values('flat_type'),
+    hue='flat_type',
+    alpha=0.2
+)
+
+# formatting
+# add thousands separator
+ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+# set title
+ax.set_title('Count of Transactions by Town')
 
 # show plot
 st.pyplot(fig)
@@ -164,6 +266,7 @@ fig, ax = plt.subplots(figsize=(15,10))
 
 # order by flat_type alphabetically
 flat_type_order = sorted(list(data['flat_type'].unique()))
+
 # plot ax
 ax = sns.boxplot(
     x='resale_price', 
@@ -177,11 +280,10 @@ ax = sns.boxplot(
 # add thousands separator
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Boxplot of Flat Resale Price by Town')
+ax.set_title('Resale Flat Price by Town')
 
 # show plot
 st.pyplot(fig)
-
 
 
 ### boxplot of town ###
@@ -191,6 +293,7 @@ fig, ax = plt.subplots(figsize=(15,10))
 
 # order by descending median resale_price
 town_order = list(data.groupby(['town']).agg({'resale_price':'median'}).reset_index().sort_values('resale_price', ascending=False)['town'])
+
 # plot boxplot
 sns.boxplot(
     x='resale_price', 
@@ -204,10 +307,9 @@ sns.boxplot(
 # add thousands separator
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Boxplot of Flat Resale Price by Town')
+ax.set_title('Resale Flat Price by Town')
 # show ploy
 st.pyplot(fig)
-
 
 
 
@@ -285,6 +387,6 @@ if st.button('Predict'):
     # predict input_data using model
     prediction = model.predict(input_data)[0]
     # format prediction with thousands separator and round to two decimal places
-    prediction = '{:,.2f}'.format(round(prediction, 2))
+    prediction = '{:,.2f}'.format(round(prediction))
     # print prediction
     st.write(f'The predicted resale flat price is ${prediction}.')
