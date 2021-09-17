@@ -82,10 +82,12 @@ def filter_data_for_map(data, years):
     return data_for_map
 
 # filter data for map due to memory limit in streamlit
-data_for_map = filter_data_for_map(data, 3)
+# define max number of years
+max_heatmap_years = 3
+data_for_map = filter_data_for_map(data, max_heatmap_years)
 
 # describe map
-st.write(f'Heat map of number of flat transactions in the past three years.')
+st.write(f'Heat map of number of flat transactions in the past {max_heatmap_years} years.')
 
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
@@ -112,7 +114,7 @@ def pydeck_map(data_for_map):
 
     st.pydeck_chart(pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
-        initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=12, pitch=40),
+        initial_view_state=pdk.ViewState(latitude=1.355, longitude=103.81, zoom=11, pitch=40),
         layers=layer
         ))
 
@@ -122,13 +124,17 @@ st.write('\n')
 
 
 
-### slider to select period of years to visualise ###
+### silder to fitler data period ###
 
+# slider to select period of years to visualise
+
+# describe visualisation section
+st.write('Let\'s take a more detailed look at the Resale Flat Prices data.')
 # default minimum and maximum year from data
 period_date_max = data['year_month'].max().year
 period_date_min = data['year_month'].min().year
 # define slider, default value max as latest data year and min as five years before
-visualisation_period = st.slider('Which period would you like to visualise?', min_value=period_date_min, max_value=period_date_max, value=(period_date_max-5,period_date_max))
+visualisation_period = st.slider('Select a period would you like to visualise.', min_value=period_date_min, max_value=period_date_max, value=(period_date_max-5,period_date_max))
 # filter data based on period
 data = data.loc[(data['year_month'] >= str(visualisation_period[0])+'-01-01') & (data['year_month'] <= str(visualisation_period[1])+'-12-01')]
 
@@ -136,11 +142,11 @@ data = data.loc[(data['year_month'] >= str(visualisation_period[0])+'-01-01') & 
 
 # describe resale_price
 period_describe = data['resale_price'].describe()
-# mean
+# mean of resale price formatted
 period_mean = '{:,}'.format(round(period_describe['mean']))
-# median
+# median of resale price formatted
 period_median = '{:,}'.format(round(period_describe['50%']))
-# max
+# max resale price formatted
 period_max = '{:,}'.format(round(period_describe['max']))
 # get data for most expensive flat, if there is more than one, select latest transaction
 most_expensive = data.loc[(data['resale_price'] == period_describe['max'])].reset_index(drop=True).sort_values('year_month', ascending=False).iloc[0]
@@ -148,20 +154,30 @@ most_expensive = data.loc[(data['resale_price'] == period_describe['max'])].rese
 # print descriptive statistics
 st.write(f'In the period from {visualisation_period[0]} to {visualisation_period[1]}:')
 st.write(f'The average resale flat price is ${period_mean} and the median is ${period_median}.')
-st.write(f'The most expensive flat sold for ${period_max}!')
-st.write(f"The flat was sold in {most_expensive['year_month'].strftime('%B %Y')} at {most_expensive['block'].title()+' '+most_expensive['street_name'].title()}, it was a {most_expensive['flat_type'].title()} with a {round(most_expensive['floor_area_sqm'])} square meter floor area.")
+st.write(f"The most expensive flat sold for ${period_max}! The flat was sold in {most_expensive['year_month'].strftime('%B %Y')} at {most_expensive['block'].title()+' '+most_expensive['street_name'].title()}, it was a {most_expensive['flat_type'].title()} with a {round(most_expensive['floor_area_sqm'])} square meter floor area.")
+st.write('\n')
+st.write('\n')
+
+
+
+### visualise data ###
+
+# set plot attributes
+plot_figsize = (15,10)
+plot_title_fontsize = 18
+plot_axis_fontsize = 15
 
 
 
 ### histogram of town ###
 
-# order by descending median resale_price
-
-# set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
-
 # order by value count of town
 town_order = data['town'].value_counts().index
+# describe plot
+st.write(f"This chart shows the number of transactions by Town. The most transactions occured in {town_order[0]}.")
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # plot ax
 ax = sns.countplot(
@@ -174,17 +190,23 @@ ax = sns.countplot(
 # add thousands separator
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Count of Transactions by Town')
+ax.set_title('Count of Transactions by Town', fontsize=plot_title_fontsize)
+ax.set_xlabel('Count', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Town', fontsize=plot_axis_fontsize)
 
 # show plot
 st.pyplot(fig)
+st.write('\n')
 
 
 
 ### histogram of town ###
 
+# describe plot
+st.write(f"This chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0]}")
+
 # set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # order by flat_type alphabetically
 flat_type_order = sorted(list(data['flat_type'].unique()))
@@ -200,17 +222,23 @@ ax = sns.countplot(
 # add thousands separator
 ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Count of Transactions by Flat Type')
+ax.set_title('Count of Transactions by Flat Type', fontsize=plot_title_fontsize)
+ax.set_xlabel('Flat Type', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Count', fontsize=plot_axis_fontsize)
 
 # show plot
 st.pyplot(fig)
+st.write('\n')
 
 
 
 ### histogram of flat prices ###
 
+# describe plot
+st.write(f"This chart shows the distribution of Resale Prices by Flat Type.")
+
 # set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # plot ax
 ax = sns.histplot(
@@ -227,50 +255,62 @@ ax = sns.histplot(
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Resale Flat Price by Flat Type')
+ax.set_title('Resale Flat Price by Flat Type', fontsize=plot_title_fontsize)
+ax.set_xlabel('Resale Price', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Count', fontsize=plot_axis_fontsize)
 
 # show plot
 st.pyplot(fig)
+st.write('\n')
 
 
 
 ### scatterplot of resale_price and floor_area_sqm ###
 
+# describe plot
+st.write(f"This is a scatterplot of Resale Prices compared to Floor Area. No surprise here that generally having more space cost more.")
+
 # set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # plot ax
 sns.scatterplot(
-    x='resale_price',
-    y='floor_area_sqm',
+    x='floor_area_sqm',
+    y='resale_price',
     data=data.sort_values('flat_type'),
     hue='flat_type',
-    alpha=0.2
+    alpha=0.4
 )
 
 # formatting
 # add thousands separator
-ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Count of Transactions by Town')
+ax.set_title('Resale Flat Price vs Floor Area', fontsize=plot_title_fontsize)
+ax.set_xlabel('Floor Area (SQM)', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Resale Price', fontsize=plot_axis_fontsize)
 
 # show plot
 st.pyplot(fig)
+st.write('\n')
 
 
 
 ### boxplot of flat type ###
 
+# describe plot
+st.write("These are boxplots of Resale Prices by different Flat Types. Here's a quick refresher on how to [read boxplots](https://miro.medium.com/max/2400/1*2c21SkzJMf3frPXPAR_gZA.png) if you need it.")
+
 # set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # order by flat_type alphabetically
 flat_type_order = sorted(list(data['flat_type'].unique()))
 
 # plot ax
 ax = sns.boxplot(
-    x='resale_price', 
-    y='flat_type', 
+    x='flat_type', 
+    y='resale_price', 
     data=data,
     order=flat_type_order, 
     flierprops={'marker':'.', 'alpha':0.05}
@@ -278,21 +318,27 @@ ax = sns.boxplot(
 
 # formatting
 # add thousands separator
-ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
+ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
 # set title
-ax.set_title('Resale Flat Price by Town')
+ax.set_title('Resale Flat Price by Flat Type', fontsize=plot_title_fontsize)
+ax.set_xlabel('Flat Type', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Resale Price', fontsize=plot_axis_fontsize)
 
 # show plot
 st.pyplot(fig)
+st.write('\n')
+
 
 
 ### boxplot of town ###
 
-# set plot and figure size
-fig, ax = plt.subplots(figsize=(15,10))
-
 # order by descending median resale_price
 town_order = list(data.groupby(['town']).agg({'resale_price':'median'}).reset_index().sort_values('resale_price', ascending=False)['town'])
+# describe plot
+st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {town_order[0]}!")
+
+# set plot and figure size
+fig, ax = plt.subplots(figsize=plot_figsize)
 
 # plot boxplot
 sns.boxplot(
@@ -306,27 +352,33 @@ sns.boxplot(
 # formatting
 # add thousands separator
 ax.xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
-# set title
-ax.set_title('Resale Flat Price by Town')
+# set title and axis
+ax.set_title('Resale Flat Price by Town', fontsize=plot_title_fontsize)
+ax.set_xlabel('Resale Price', fontsize=plot_axis_fontsize)
+ax.set_ylabel('Town', fontsize=plot_axis_fontsize)
+
 # show ploy
 st.pyplot(fig)
+st.write('\n')
 
 
 
 ### prediction ###
 
 # prediction section
+
+st.write('\n')
 st.write('# Predict Resale Flat Price')
-st.write('Enter some basic information of your flat for the model to predict it\'s resale price')
+st.write('Enter some basic information (or just try it out with the default values) of the flat you want to sell or buy for the model to predict it\'s price.')
 
 # form to store users input
 with st.form(key='input_form'):
 
     # ask and store users input
-    input_postal_code = st.text_input(label='Postal Code')
-    input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1)
-    input_floor = st.number_input(label='Floor', min_value=1)
-    input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1)
+    input_postal_code = st.text_input(label='Postal Code', value='390043')
+    input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1, max_value=500, value=80, step=10)
+    input_floor = st.number_input(label='Floor', min_value=1, max_value=100, value=10, step=2)
+    input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1900, max_value=dt.date.today().year, value=2000, step=1)
 
     # get coordinates from address as latitude and longitude using google geocode api
     def get_coordinates_from_address(address, api_key):
