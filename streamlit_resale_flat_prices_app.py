@@ -272,6 +272,7 @@ st.write('\n')
 
 # describe plot
 st.write(f"Now this is a scatterplot of Resale Prices compared to Floor Area. No surprise here that we can see a general trend that a flat with more rooms and space cost more.")
+st.write(f"However, we can also see that similar flats with the same floor area and flat type can vary significantly in price!")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -335,10 +336,20 @@ st.write('\n')
 
 ### boxplot of town ###
 
+# group by town and get median resale price
+town_median_resale_price = data.groupby(['town']).agg({'resale_price':'median'}).reset_index().sort_values('resale_price', ascending=False)
+# get town with highest median 
+most_expensive_town = town_median_resale_price['town'].iloc[0].title()
+# get town with lowest median
+least_expensive_town = town_median_resale_price['town'].iloc[-1].title()
+# compare and get difference between highest median and lowest median
+median_price_difference = round(town_median_resale_price['resale_price'].iloc[0] / town_median_resale_price['resale_price'].iloc[-1], 1)
 # order by descending median resale_price
-town_order = list(data.groupby(['town']).agg({'resale_price':'median'}).reset_index().sort_values('resale_price', ascending=False)['town'])
+town_order = list(town_median_resale_price['town'])
+
 # describe plot
-st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {town_order[0].title()}!")
+st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {most_expensive_town}.")
+st.write(f"Apart from the floor area and flat type, which town the flat is in also influences the price. The median price of a flat in {most_expensive_town} is {median_price_difference} times higher than {least_expensive_town}!")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -363,7 +374,6 @@ ax.set_ylabel('Town', fontsize=plot_axis_fontsize)
 # show ploy
 st.pyplot(fig)
 st.write('\n')
-
 
 
 ### prediction ###
