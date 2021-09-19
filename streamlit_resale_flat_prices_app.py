@@ -87,7 +87,8 @@ max_heatmap_years = 1
 data_for_map = filter_data_for_map(data, max_heatmap_years)
 
 # describe map
-st.write(f'Let\'s have a look at where flats have been transacted in the past {max_heatmap_years} years. The taller the pillars, the more transactions have taken place.')
+st.write(f'Let\'s have a look at where flats have been transacted in the past {max_heatmap_years} year. The taller the pillars, the more transactions have taken place.')
+st.write('The spikes are likely to be flats where the [Minimum Occupation Period](https://www.hdb.gov.sg/residential/selling-a-flat/eligibility) has just passed and are eligible to be sold on the resale market.')
 
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
@@ -378,9 +379,9 @@ with st.form(key='input_form'):
 
     # ask and store users input
     input_postal_code = st.text_input(label='Postal Code', value='440033')
-    input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1, max_value=500, value=80, step=10)
+    input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1, max_value=500, value=70, step=10)
     input_floor = st.number_input(label='Floor', min_value=1, max_value=100, value=10, step=2)
-    input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1900, max_value=dt.date.today().year, value=2000, step=1)
+    input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1900, max_value=dt.date.today().year, value=1975, step=1)
 
     # get coordinates from address as latitude and longitude using google geocode api
     def get_coordinates_from_address(address, api_key):
@@ -434,7 +435,7 @@ with st.form(key='input_form'):
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 
 # describe predict button
-st.write('Take a guess at the price before running the model!')
+st.write('Take a guess at the price before running the model :)')
 
 # add predict button
 if st.button('Predict'):
@@ -443,4 +444,4 @@ if st.button('Predict'):
     # format prediction with thousands separator and round to two decimal places
     prediction = '{:,.2f}'.format(round(prediction))
     # print prediction
-    st.write(f'The predicted resale flat price is ${prediction}.')
+    st.write(f'The predicted resale price of a flat at postal code {input_postal_code} with a floor area of {input_floor} square meters is ${prediction}!')
