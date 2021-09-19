@@ -389,7 +389,7 @@ with st.form(key='input_form'):
 
     # ask and store users input
     input_postal_code = st.text_input(label='Postal Code', value='440033')
-    input_floor_area_sqm = st.number_input(label='Floor Area in square meters (1 square meter or sqm is approximately 10 square feet or sqft) ', min_value=1, max_value=500, value=70, step=10)
+    input_floor_area_sqm = st.number_input(label='Floor Area in square meters (1 square meter approximately 10 square feet) ', min_value=1, max_value=500, value=70, step=10)
     input_floor = st.number_input(label='Floor', min_value=1, max_value=100, value=10, step=2)
     input_lease_commence_year = st.number_input(label='Lease Commence Year', min_value=1900, max_value=dt.date.today().year, value=1975, step=1)
 
