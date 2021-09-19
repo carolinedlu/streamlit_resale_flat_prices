@@ -61,7 +61,7 @@ max_data_date = data['year_month'].max().strftime('%B %Y')
 total_row_count = '{:,}'.format(len(data))
 
 # introduction to app
-st.write(f'The data has been extracted from Data.gov.sg.')
+st.write(f'The data has been extracted from [Data.gov.sg](https://data.gov.sg/dataset/resale-flat-prices) and used in accordance with [Singapore Open Data License](https://data.gov.sg/open-data-licence).')
 st.write(f'There are a total of {total_row_count} recorded resale flat transactions from {min_data_date} to {max_data_date}.')
 st.write('\n')
 st.write('\n')
