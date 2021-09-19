@@ -381,7 +381,7 @@ st.write('\n')
 # prediction section
 
 st.write('\n')
-st.write('# Predict Resale Flat Price')
+st.write('# Predicting Resale Flat Price')
 st.write('Enter some basic information (or just try it out with the default values) of the flat you want to sell or buy for the model to predict it\'s price.')
 
 # form to store users input
@@ -438,14 +438,14 @@ with st.form(key='input_form'):
     })
 
     # submit form button
-    st.write('Load inputs to machine learning model to prepare for a prediction:')
+    st.write('First, Load inputs to machine learning model to prepare for a prediction:')
     submit = st.form_submit_button(label='Load')
 
 # load model
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 
 # describe predict button
-st.write('Take a guess at the price before running the model :)')
+st.write('Second, take a guess at the price before running the model :)')
 
 # add predict button
 if st.button('Predict'):
