@@ -129,7 +129,7 @@ st.write('\n')
 # slider to select period of years to visualise
 
 # describe visualisation section
-st.write('Let\'s take a more detailed look at the Resale Flat Prices data.')
+st.write(f'Next up is a deeper dive into the Resale Flat Prices data.')
 # default minimum and maximum year from data
 period_date_max = data['year_month'].max().year
 period_date_min = data['year_month'].min().year
