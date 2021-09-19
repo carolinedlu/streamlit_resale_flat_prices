@@ -83,11 +83,11 @@ def filter_data_for_map(data, years):
 
 # filter data for map due to memory limit in streamlit
 # define max number of years
-max_heatmap_years = 3
+max_heatmap_years = 1
 data_for_map = filter_data_for_map(data, max_heatmap_years)
 
 # describe map
-st.write(f'Let\'s have a look at where flats are being transacted in the past {max_heatmap_years} years. The taller the pillars, the more transactions have taken place.')
+st.write(f'Let\'s have a look at where flats have been transacted in the past {max_heatmap_years} years. The taller the pillars, the more transactions have taken place.')
 
 # create pydeck map in streamlit
 def pydeck_map(data_for_map):
@@ -133,8 +133,10 @@ st.write(f'Next up is a deeper dive into the Resale Flat Prices data.')
 # default minimum and maximum year from data
 period_date_max = data['year_month'].max().year
 period_date_min = data['year_month'].min().year
-# define slider, default value max as latest data year and min as five years before
-visualisation_period = st.slider('Select a period would you like to visualise.', min_value=period_date_min, max_value=period_date_max, value=(period_date_max-5,period_date_max))
+# define slider, default value max as latest data year and min as x years before
+# define years before
+default_years_before = 3
+visualisation_period = st.slider('Select a period would you like to visualise.', min_value=period_date_min, max_value=period_date_max, value=(period_date_max-default_years_before,period_date_max))
 # filter data based on period
 data = data.loc[(data['year_month'] >= str(visualisation_period[0])+'-01-01') & (data['year_month'] <= str(visualisation_period[1])+'-12-01')]
 
@@ -200,10 +202,10 @@ st.write('\n')
 
 
 
-### histogram of town ###
+### histogram of flat type ###
 
 # describe plot
-st.write(f"This chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0].title()}")
+st.write(f"And this chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0].title()}")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -235,7 +237,7 @@ st.write('\n')
 ### histogram of flat prices ###
 
 # describe plot
-st.write(f"This chart shows the distribution of Resale Prices by Flat Type.")
+st.write(f"Here's a chart that shows the distribution of Resale Prices by Flat Type.")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -268,7 +270,7 @@ st.write('\n')
 ### scatterplot of resale_price and floor_area_sqm ###
 
 # describe plot
-st.write(f"This is a scatterplot of Resale Prices compared to Floor Area. No surprise here that generally having more space cost more.")
+st.write(f"Now this is a scatterplot of Resale Prices compared to Floor Area. No surprise here that we can see a general trend that a flat with more rooms and space cost more.")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -375,7 +377,7 @@ st.write('Enter some basic information (or just try it out with the default valu
 with st.form(key='input_form'):
 
     # ask and store users input
-    input_postal_code = st.text_input(label='Postal Code', value='390043')
+    input_postal_code = st.text_input(label='Postal Code', value='440033')
     input_floor_area_sqm = st.number_input(label='Floor Area (square meters)', min_value=1, max_value=500, value=80, step=10)
     input_floor = st.number_input(label='Floor', min_value=1, max_value=100, value=10, step=2)
     input_lease_commence_year = st.number_input(label='Lease Commence (year)', min_value=1900, max_value=dt.date.today().year, value=2000, step=1)
