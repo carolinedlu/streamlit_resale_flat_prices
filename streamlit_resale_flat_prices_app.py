@@ -452,6 +452,6 @@ if st.button('Predict'):
     # predict input_data using model
     prediction = model.predict(input_data)[0]
     # format prediction with thousands separator and round to two decimal places
-    prediction = '{:,.2f}'.format(round(prediction))
+    prediction = '{:,}'.format(round(prediction))
     # print prediction
-    st.write(f'The predicted resale price of a flat at postal code {input_postal_code} with a floor area of {input_floor} square meters is ${prediction}!')
+    st.write(f'The predicted resale price of a flat at postal code {input_postal_code} with a floor area of {input_floor_area_sqm} square meters is ${prediction}!')
