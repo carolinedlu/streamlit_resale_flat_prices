@@ -438,7 +438,7 @@ with st.form(key='input_form'):
     })
 
     # submit form button
-    st.write('First, Load inputs to machine learning model to prepare for a prediction:')
+    st.write('First, load inputs to machine learning model to prepare for a prediction:')
     submit = st.form_submit_button(label='Load')
 
 # load model
