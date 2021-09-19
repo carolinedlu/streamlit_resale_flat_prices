@@ -206,7 +206,7 @@ st.write('\n')
 ### histogram of flat type ###
 
 # describe plot
-st.write(f"And this chart shows the number of transactions by Flat Type. The most often transacted Flat Type is {data['flat_type'].value_counts().index[0].title()}")
+st.write(f"And this chart shows the number of transactions by Flat Type. The most often transacted Flat Type are {data['flat_type'].value_counts().index[0].title()} flats.")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -348,8 +348,8 @@ median_price_difference = round(town_median_resale_price['resale_price'].iloc[0]
 town_order = list(town_median_resale_price['town'])
 
 # describe plot
-st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is {most_expensive_town}.")
-st.write(f"Apart from the floor area and flat type, which town the flat is in also influences the price. The median price of a flat in {most_expensive_town} is {median_price_difference} times higher than {least_expensive_town}!")
+st.write(f"Here are more pretty boxplots of Resale Prices by Town. The most expensive area to buy a flat is in {most_expensive_town}.")
+st.write(f"Apart from the floor area and flat type, the location of the flat can also influence the price. The median price of a flat in {most_expensive_town} is {median_price_difference} times higher than {least_expensive_town}!")
 
 # set plot and figure size
 fig, ax = plt.subplots(figsize=plot_figsize)
@@ -438,8 +438,11 @@ with st.form(key='input_form'):
     })
 
     # submit form button
-    st.write('First, load inputs to machine learning model to prepare for a prediction:')
+    st.write('First, load the inputs to the machine learning model to prepare for a prediction:')
     submit = st.form_submit_button(label='Load')
+
+# load model
+model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 
 # load model
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
@@ -454,4 +457,4 @@ if st.button('Predict'):
     # format prediction with thousands separator and round to two decimal places
     prediction = '{:,}'.format(round(prediction))
     # print prediction
-    st.write(f'The predicted resale price of a flat at postal code {input_postal_code} with a floor area of {input_floor_area_sqm} square meters is ${prediction}!')
+    st.write(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
