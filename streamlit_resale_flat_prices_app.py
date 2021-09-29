@@ -447,17 +447,13 @@ model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 # describe predict button
 st.write('Second, take a guess at the price before running the model :)')
 
-# show spinner with message while
-with st.spinner('Wait for it...'):
-
-    # add predict button
-    if st.button('Predict'):
-        # predict input_data using model
-        prediction = model.predict(input_data)[0]
-        # format prediction with thousands separator and round to two decimal places
-        prediction = '{:,}'.format(round(prediction))
-        # print prediction
-        st.write(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
-
-st.success('Done!')
-st.balloons()
+# add predict button
+if st.button('Predict'):
+    # predict input_data using model
+    prediction = model.predict(input_data)[0]
+    # format prediction with thousands separator and round to two decimal places
+    prediction = '{:,}'.format(round(prediction))
+    # print prediction
+    st.balloons()
+    st.success(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
+    #st.write(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
