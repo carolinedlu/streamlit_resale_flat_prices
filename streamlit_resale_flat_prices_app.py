@@ -456,4 +456,7 @@ if st.button('Predict'):
     # print prediction
     st.balloons()
     st.success(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
-    #st.write(f'The predicted resale price of a flat at postal code {input_postal_code}, with a floor area of {input_floor_area_sqm} square meters, on the {input_floor} floor, and with a lease that commenced in {input_lease_commence_year} is **${prediction}**!')
+
+st.write('\n')
+st.write('\n')
+st.write('\n')
