@@ -1,9 +1,9 @@
 # Exploring Resale Prices of Public Housing in Singapore using Streamlit
 <br>
 Visualise the resale flat prices data set from Data.gov.sg.
-
+<br>
 [![Open in Streamlit][share_badge]][share_link] 
-
+<br>
 [![Preview][share_img]][share_link]
 
 [share_badge]: https://static.streamlit.io/badges/streamlit_badge_black_white.svg
