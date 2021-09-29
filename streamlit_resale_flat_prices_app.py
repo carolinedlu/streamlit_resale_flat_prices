@@ -1,10 +1,3 @@
-# conda deactivate
-# conda env remove -n streamlit_resale_flat_prices
-# conda create -n streamlit_resale_flat_prices python=3.8.5
-# conda activate streamlit_resale_flat_prices
-# conda install streamlit
-# python streamlit_resale_flat_prices_app.py
-
 # imports
 import pandas as pd
 import numpy as np
@@ -22,6 +15,13 @@ import pydeck as pdk
 
 
 
+# set tab name
+st.set_page_config(page_title='Resale HDB Prices', page_icon=':house:')
+# hide menu button
+st.markdown(""" <style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style> """, unsafe_allow_html=True)
 # title of app
 st.title('Exploration Resale Prices of Public Housing in Singapore')
 st.write('\n')
