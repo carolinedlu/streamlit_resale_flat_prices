@@ -4,5 +4,8 @@
 token = "pk.eyJ1IjoiZ3JlY28xODk5IiwiYSI6ImNrdG10OGk2djFieHEydnF6azI3bjNiYmgifQ.MoHmL8OEkQM3BP-lxjowdw"
 
 [theme]
-base = "dark"
-primaryColor = "#2596be"
+primaryColor="#623fba"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#F0F2F6"
+textColor="#262730"
+font="sans serif"
