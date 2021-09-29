@@ -16,7 +16,7 @@ import pydeck as pdk
 
 
 # set tab name
-st.set_page_config(page_title='Resale HDB Prices', page_icon=':house:')
+st.set_page_config(page_title='Resale HDB Prices', page_icon='🏠')
 # hide menu button
 st.markdown(""" <style>
 #MainMenu {visibility: hidden;}
@@ -445,7 +445,7 @@ with st.form(key='input_form'):
 model = pickle.load(open('xgb_baseline.pkl', 'rb'))
 
 # describe predict button
-st.write('Second, take a guess at the price before running the model :)')
+st.write('Second, take a guess at the price before running the model 😊.')
 
 # add predict button
 if st.button('Predict'):
